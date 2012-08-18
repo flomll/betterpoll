@@ -3,7 +3,7 @@
 <?php JHTML::_('behavior.tooltip'); ?>
 
 <?php
-	JToolBarHelper::title(  JText::_( 'MFPoll Manager' ) );
+	JToolBarHelper::title(  JText::_( 'MFPoll Users' ) );
 	JToolBarHelper::publishList();
 	JToolBarHelper::unpublishList();
 	JToolBarHelper::deleteList();
@@ -12,6 +12,7 @@
 	JToolBarHelper::help( 'screen.polls' );
 ?>
 
+<div style="width: 48%; float:left;">
 <form action="index.php?option=com_mfpolls" method="post" name="adminForm">
 <table>
 	<tr>
@@ -37,19 +38,16 @@
 				<input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $this->items ); ?>);" />
 			</th>
 			<th  class="title">
-				<?php echo JHTML::_('grid.sort',   'Poll Title', 'm.title', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+				<?php echo JHTML::_('grid.sort',   'Username', 'm.title', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+			</th>
+			<th width="15%" align="center">
+				<?php echo JHTML::_('grid.sort',   'Date/Time', 'm.published', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
 			<th width="5%" align="center">
-				<?php echo JHTML::_('grid.sort',   'Published', 'm.published', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+				<?php echo JHTML::_('grid.sort',   'Option', 'm.voters', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
 			<th width="5%" align="center">
-				<?php echo JHTML::_('grid.sort',   'Votes', 'm.voters', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-			</th>
-			<th width="5%" align="center">
-				<?php echo JHTML::_('grid.sort',   'Options', 'numoptions', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-			</th>
-			<th width="5%" align="center">
-				<?php echo JHTML::_('grid.sort',   'Lag', 'm.lag', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
+				<?php echo JHTML::_('grid.sort',   'Device', 'numoptions', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 			</th>
 			<th width="1%" nowrap="nowrap">
 				<?php echo JHTML::_('grid.sort',   'ID', 'm.id', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
@@ -59,7 +57,7 @@
 	<tfoot>
 		<tr>
 			<td colspan="9">
-				<?php echo $this->pagination->getListFooter(); ?>
+				<?php /*echo $this->pagination->getListFooter();*/ ?>
 			</td>
 		</tr>
 	</tfoot>
@@ -71,44 +69,27 @@
 		$row = &$this->items[$i];
 
 		$link 		= JRoute::_( 'index.php?option=com_mfpolls&view=poll&task=edit&cid[]='. $row->id );
-		$linkusers = JRoute::_( 'index.php?option=com_mfpolls&view=users' );
 
 		$checked 	= JHTML::_('grid.checkedout',   $row, $i );
 		$published 	= JHTML::_('grid.published', $row, $i );
 	?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td>
-				<?php echo $this->pagination->getRowOffset( $i ); ?>
+				<?php /*echo $this->pagination->getRowOffset( $i );*/ ?>
 			</td>
 			<td>
 				<?php echo $checked; ?>
 			</td>
 			<td>
-			<?php if (  JTable::isCheckedOut($this->user->get ('id'), $row->checked_out )  ) {
-				echo $row->title;
-			} else {
-				?>
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Poll' );?>::<?php echo htmlspecialchars($row->title); ?>">
+				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Poll' );?>::<?php echo htmlspecialchars($row->voter); ?>">
 				<a href="<?php echo $link  ?>">
-					<?php echo htmlspecialchars($row->title); ?></a></span>
-				<?php
-			}
-			?>
+					<?php echo htmlspecialchars($row->username); ?></a></span>
 			</td>
 			<td align="center">
-				<?php echo $published;?>
+				<?php echo $row->date; ?>
 			</td>
 			<td align="center">
-				<?php if($row->voters > 0) { ?>
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Show voted users' );?>::<?php echo htmlspecialchars($row->title); ?>">
-				<a href="<?php echo $linkusers  ?>">
-				<?php } echo $row->voters; ?>
-				<?php if($row->voters > 0) { ?>
-				</a></span>
-				<?php } ?>
-			</td>
-			<td align="center">
-				<?php echo $row->numoptions; ?>
+				<?php echo $row->vote_id; ?>
 			</td>
 			<td align="center">
 				<?php echo $row->lag; ?>
@@ -132,3 +113,8 @@
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>
 </form>
+</div>
+
+<div style="width: 48%; float:right;">
+TODO: Statistic
+</div>

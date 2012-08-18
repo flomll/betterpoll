@@ -18,16 +18,16 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 jimport( 'joomla.application.component.view');
 
 /**
- * HTML View class for the MFPolls component
+ * HTML View class for the Poll component
  *
  * @static
- * @package		MF
- * @subpackage	MFPolls
+ * @package		Joomla
+ * @subpackage	Poll
  * @since 1.0
  */
-class MFPollViewPolls extends JView
+class MFPollViewUsers extends JView
 {
-	function display( $tpl = null )
+/*	function display( $tpl = null )
 	{
 		global $mainframe, $option;
 
@@ -116,6 +116,51 @@ class MFPollViewPolls extends JView
 		$this->assignRef('lists',		$lists);
 		$this->assignRef('items',		$rows);
 		$this->assignRef('pagination',	$pagination);
+
+		parent::display($tpl);
+	}*/
+	
+	function display( $tpl = null )
+	{
+		global $mainframe, $option;
+
+		$db					=& JFactory::getDBO();
+		$pollid = (int)15;
+		
+		// TODO: Calculate the number of rows for pageination 
+// 		$query = 'SELECT COUNT(m.id)'
+// 		. ' FROM #__mfpolls AS m'
+// 		. $where
+// 		;
+// 		$db->setQuery( $query );
+// 		$total = $db->loadResult();
+// 
+// 		jimport('joomla.html.pagination');
+// 		$pagination = new JPagination( $total, $limitstart, $limit );
+		
+		// TODO: Load the user data to display.
+		$query = 'SELECT d.*, u.name AS voter, u.email AS email, u.username AS username'
+		. ' FROM #__mfpoll_date AS d'
+		. ' LEFT JOIN #__users AS u ON u.id = d.user_id'
+//		. ' LEFT JOIN #__mfpoll_data AS d ON d.pollid = m.id AND d.text <> ""'
+ 		. ' WHERE d.poll_id = '.$pollid
+		;
+		
+		$db->setQuery( $query, $pagination->limitstart, $pagination->limit );
+		$rows = $db->loadObjectList();
+		
+// 		print_r($rows);
+
+		if ($db->getErrorNum())
+		{
+			echo $db->stderr();
+			return false;
+		}
+
+// 		$this->assignRef('user',		JFactory::getUser());
+// 		$this->assignRef('lists',		$lists);
+		$this->assignRef('items',		$rows);
+// 		$this->assignRef('pagination',	$pagination);
 
 		parent::display($tpl);
 	}
