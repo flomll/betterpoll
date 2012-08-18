@@ -8,3 +8,6 @@ state so I will post it here if the first stable version is available.
 # Planed features:
 - anonym / user specified poll
 - view to display which user has already voted. (admin only)
+
+#TODO:
+- Do not use Cookie
