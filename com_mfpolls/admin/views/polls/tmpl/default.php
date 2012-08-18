@@ -3,7 +3,7 @@
 <?php JHTML::_('behavior.tooltip'); ?>
 
 <?php
-	JToolBarHelper::title(  JText::_( 'Poll Manager' ) );
+	JToolBarHelper::title(  JText::_( 'MFPoll Manager' ) );
 	JToolBarHelper::publishList();
 	JToolBarHelper::unpublishList();
 	JToolBarHelper::deleteList();
