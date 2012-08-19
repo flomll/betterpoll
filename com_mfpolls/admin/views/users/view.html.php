@@ -125,7 +125,14 @@ class MFPollViewUsers extends JView
 		global $mainframe, $option;
 
 		$db					=& JFactory::getDBO();
-		$pollid = (int)15;
+		$pollid = JRequest::getVar('cid');
+		$pollid = (int)$pollid[0];
+		
+		if($pollid < 0)
+		{
+			echo 'Wrong pollid';
+			return;
+		}
 		
 		// TODO: Calculate the number of rows for pageination 
 // 		$query = 'SELECT COUNT(m.id)'
@@ -142,7 +149,6 @@ class MFPollViewUsers extends JView
 		$query = 'SELECT d.*, u.name AS voter, u.email AS email, u.username AS username'
 		. ' FROM #__mfpoll_date AS d'
 		. ' LEFT JOIN #__users AS u ON u.id = d.user_id'
-//		. ' LEFT JOIN #__mfpoll_data AS d ON d.pollid = m.id AND d.text <> ""'
  		. ' WHERE d.poll_id = '.$pollid
 		;
 		
@@ -156,6 +162,118 @@ class MFPollViewUsers extends JView
 			echo $db->stderr();
 			return false;
 		}
+		
+// --------------------------------------------------------------------------------------
+		$first_vote = '';
+		$last_vote 	= '';
+		$votes		= '';
+
+		// Check if there is a poll corresponding to id and if poll is published
+		if ($pollid > 0)
+		{
+			$query = 'SELECT MIN( date ) AS mindate, MAX( date ) AS maxdate'
+				. ' FROM #__mfpoll_date'
+				. ' WHERE poll_id = '. (int) $pollid;
+			$db->setQuery( $query );
+			$dates = $db->loadObject();
+
+			if (isset( $dates->mindate )) {
+				$first_vote = JHTML::_('date',  $dates->mindate, JText::_('DATE_FORMAT_LC2') );
+				$last_vote 	= JHTML::_('date',  $dates->maxdate, JText::_('DATE_FORMAT_LC2') );
+			}
+
+			$query = 'SELECT a.id, a.text, a.hits, b.voters '
+				. ' FROM #__mfpoll_data AS a'
+				. ' INNER JOIN #__mfpolls AS b ON b.id = a.pollid'
+				. ' WHERE a.pollid = '. (int) $pollid
+				. ' AND a.text <> ""'
+				. ' ORDER BY a.hits DESC';
+			$db->setQuery( $query );
+			$votes = $db->loadObjectList();
+		} else {
+			$votes = array();
+		}
+
+		// list of polls for dropdown selection
+// 		$query = 'SELECT id, title, alias'
+// 			. ' FROM #__mfpolls'
+// 			. ' WHERE published = 1'
+// 			. ' ORDER BY id'
+// 		;
+// 		$db->setQuery( $query );
+// 		$pList = $db->loadObjectList();
+// 
+// 		foreach ($pList as $k=>$p)
+// 		{
+// 			$pList[$k]->url = JRoute::_('index.php?option=com_mfpoll&id='.$p->id.':'.$p->alias);
+// 		}
+
+// 		array_unshift( $pList, JHTML::_('select.option',  '', JText::_( 'Select Poll from the list' ), 'url', 'title' ));
+
+		// dropdown output
+// 		$lists = array();
+
+// 		$lists['polls'] = JHTML::_('select.genericlist',   $pList, 'id',
+// 			'class="inputbox" size="1" style="width:200px" onchange="if (this.options[selectedIndex].value != \'\') {document.location.href=this.options[selectedIndex].value}"',
+//  			'url', 'title',
+//  			JRoute::_('index.php?option=com_mfpoll&id='.$pollid.':'.$poll->alias)
+//  			);
+
+
+		$graphwidth = 200;
+		$barheight 	= 4;
+		$maxcolors 	= 5;
+		$barcolor 	= 0;
+		$tabcnt 	= 0;
+		$colorx 	= 0;
+
+		$maxval		= isset($votes[0]) ? $votes[0]->hits : 0;
+		$sumval		= isset($votes[0]) ? $votes[0]->voters : 0;
+
+		$k = 0;
+		for ($i = 0; $i < count( $votes ); $i++)
+		{
+			$vote =& $votes[$i];
+
+			if ($maxval > 0 && $sumval > 0)
+			{
+				$vote->width	= ceil( $vote->hits * $graphwidth / $maxval );
+				$vote->percent = round( 100 * $vote->hits / $sumval, 1 );
+			}
+			else
+			{
+				$vote->width	= 0;
+				$vote->percent	= 0;
+			}
+
+			$vote->class = '';
+			if ($barcolor == 0)
+			{
+				if ($colorx < $maxcolors) {
+					$colorx = ++$colorx;
+				} else {
+					$colorx = 1;
+				}
+				$vote->class = "polls_color_".$colorx;
+			} else {
+				$vote->class = "polls_color_".$barcolor;
+			}
+
+			$vote->barheight = $barheight;
+
+			$vote->odd		= $k;
+			$vote->count	= $i;
+			$k = 1 - $k;
+		}
+
+		$this->assign('first_vote',	$first_vote);
+		$this->assign('last_vote',	$last_vote);
+
+// 		$this->assignRef('lists',	$lists);
+// 		$this->assignRef('params',	$params);
+// 		$this->assignRef('poll',	$poll);
+		$this->assignRef('votes',	$votes);	
+// --------------------------------------------------------------------------------------		
 
 // 		$this->assignRef('user',		JFactory::getUser());
 // 		$this->assignRef('lists',		$lists);

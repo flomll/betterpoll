@@ -71,7 +71,7 @@
 		$row = &$this->items[$i];
 
 		$link 		= JRoute::_( 'index.php?option=com_mfpolls&view=poll&task=edit&cid[]='. $row->id );
-		$linkusers = JRoute::_( 'index.php?option=com_mfpolls&view=users' );
+		$linkusers = JRoute::_( 'index.php?option=com_mfpolls&view=users&cid[]='.$row->id );
 
 		$checked 	= JHTML::_('grid.checkedout',   $row, $i );
 		$published 	= JHTML::_('grid.published', $row, $i );
