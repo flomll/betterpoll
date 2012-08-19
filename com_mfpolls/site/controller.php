@@ -67,14 +67,28 @@ class MFPollController extends JController
 			return;
 		}
 
-		$cookieName	= JUtility::getHash( $mainframe->getName() . 'mfpoll' . $poll_id );
+		// Code for generate the cookie.
+		// We do not use cookies anymore because we log this at db.
+// 		$cookieName	= JUtility::getHash( $mainframe->getName() . 'mfpoll' . $poll_id );
 		// ToDo - may be adding those information to the session?
-		$voted = JRequest::getVar( $cookieName, '0', 'COOKIE', 'INT');
+// 		$voted = JRequest::getVar( $cookieName, '0', 'COOKIE', 'INT');
+
+		// Has the user already voted?
+		$query = 'SELECT id FROM #__mfpoll_date AS d WHERE d.poll_id = '.$poll_id .' AND d.user_id = '.$user->id;
+		$db->setQuery($query);
+		$rows = $db->loadObject();
+		print_r($rows);
+		
+		$voted = false;
+		if($rows->id != null || $rows->id != 0)
+		{
+			$voted = true;
+		}
 
 		if ($voted || !$option_id )
 		{
 			if($voted) {
-				$msg = JText::_('You already voted for this poll today!');
+				echo $msg = JText::_('You already voted for this poll today!');
 			}
 
 			if(!$option_id){
@@ -83,7 +97,7 @@ class MFPollController extends JController
 		}
 		else
 		{
-			setcookie( $cookieName, '1', time() + $poll->lag );
+// 			setcookie( $cookieName, '1', time() + $poll->lag );
 
 			require_once(JPATH_COMPONENT.DS.'models'.DS.'mfpoll.php');
 			$model = new MFPollModelPoll();
