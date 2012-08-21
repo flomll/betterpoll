@@ -16,6 +16,7 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.controller' );
+jimport('joomla.environment.browser');
 
 /**
  * @package		Joomla
@@ -39,7 +40,7 @@ class MFPollController extends JController
 	}
 
 	function display( )
-	{
+	{		
 		switch($this->getTask())
 		{
 			case 'add'     :

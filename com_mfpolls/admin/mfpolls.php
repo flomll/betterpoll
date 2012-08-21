@@ -21,13 +21,23 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 //	$mainframe->redirect( 'index.php', JText::_('ALERTNOTAUTH') );
 //}
 
-require_once( JPATH_COMPONENT.DS.'controller.php' );
-
 // Set the table directory
 JTable::addIncludePath( JPATH_COMPONENT.DS.'tables' );
 
+require_once( JPATH_COMPONENT.DS.'controller.php' );
+// Require specific controller if requested
+if($controller = JRequest::getWord('controller')) {
+    $path = JPATH_COMPONENT.DS.'controllers'.DS.$controller.'.php';
+    if (file_exists($path)) {
+        require_once $path;
+    } else {
+        $controller = '';
+    }
+}
+
 // Create the controller
-$controller	= new MFPollController( );
+$classname    = 'MFPollController'.$controller;
+$controller   = new $classname( );
 
 $controller->execute( JRequest::getCmd( 'task' ) );
 $controller->redirect();
