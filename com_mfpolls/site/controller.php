@@ -41,7 +41,6 @@ class MFPollController extends JController
 
 	/**
  	 * Add a vote to an option
- 	 * // FIXME: Check ob der user schon abgestimmt hat oder nicht!!!
  	 */
 	function vote()
 	{
@@ -53,7 +52,7 @@ class MFPollController extends JController
 		// FIXME:
 		$user =& JFactory::getUser();
 		if($user->guest){
-			echo 'Sorry, this vote is not allowed for unregisterd user!';
+			JError::raiseNotice( 100, 'Sorry, this vote is not allowed for unregistered user!' );
 			return;
 		}
 
@@ -67,17 +66,10 @@ class MFPollController extends JController
 			return;
 		}
 
-		// Code for generate the cookie.
-		// We do not use cookies anymore because we log this at db.
-// 		$cookieName	= JUtility::getHash( $mainframe->getName() . 'mfpoll' . $poll_id );
-		// ToDo - may be adding those information to the session?
-// 		$voted = JRequest::getVar( $cookieName, '0', 'COOKIE', 'INT');
-
 		// Has the user already voted?
 		$query = 'SELECT id FROM #__mfpoll_date AS d WHERE d.poll_id = '.$poll_id .' AND d.user_id = '.$user->id;
 		$db->setQuery($query);
 		$rows = $db->loadObject();
-		print_r($rows);
 		
 		$voted = false;
 		if($rows->id != null || $rows->id != 0)
@@ -97,8 +89,6 @@ class MFPollController extends JController
 		}
 		else
 		{
-// 			setcookie( $cookieName, '1', time() + $poll->lag );
-
 			require_once(JPATH_COMPONENT.DS.'models'.DS.'mfpoll.php');
 			$model = new MFPollModelPoll();
 			$model->vote( $poll_id, $option_id );

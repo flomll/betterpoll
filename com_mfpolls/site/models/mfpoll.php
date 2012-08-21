@@ -35,9 +35,43 @@ class MFPollModelPoll extends JModel
 		// FIXME:
 		$user =& JFactory::getUser();
 		if($user->guest){
-			echo 'Sorry, this vote is not allowed for unregisterd user!';
-			return;
+			JError::raiseNotice( 100, 'Sorry, this vote is not allowed for unregistered user!' );
+// 			JFactory::getApplication()->enqueueMessage( 'Sorry, this vote is not allowed for unregisterd user!' );
+			return; // do not execute the rest of the function.
 		}
+				
+		// Get browser informations
+// 		$browser = &JBrowser::getInstance();
+// 		echo $browser->getPlatform()." - ";
+// 		echo $browser->getBrowser()."-";
+// 		echo $browser->getMajor().".";
+// 		echo $browser->getMinor();
+	
+		$ismobile = true;
+		$findme = 'mobile';
+		$useragent = strtolower($_SERVER['HTTP_USER_AGENT']);
+		if (($pos = strpos($useragent, $findme)) === false)
+		{
+			$ismobile = false;
+		} 
+		else
+		{
+			$findmes = array('iphone', 'ipad', 'android');
+			$isfound = 'others';
+			foreach($findmes as $findme)
+			{
+				if (($pos = strpos($useragent, $findme)) !== false)
+				{
+					$isfound = true;
+				}
+			}
+			
+			if(strcmp($isfound, 'others'))
+			{
+				
+			}
+		}
+
 		
 		$db = $this->getDBO();
 		$poll_id	= (int) $poll_id;
@@ -65,6 +99,7 @@ class MFPollModelPoll extends JModel
 			. ', vote_id = ' . (int) $option_id
 			. ', poll_id = ' . (int) $poll_id
 			. ', user_id = ' . (int) $user->id
+			. ', device = ' . (int) $ismobile
 		;
 		$db->setQuery( $query );
 		$db->query();

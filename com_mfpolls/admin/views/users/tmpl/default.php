@@ -87,7 +87,13 @@
 				<?php echo $row->vote_id; ?>
 			</td>
 			<td align="center">
-				<?php echo $row->lag; ?>
+				<?php 
+					if( $row->device == 1) {
+						echo JText::_( 'Mobile' );
+					} else { 
+						echo JText::_( 'PC/Mac' );
+					} 
+				?>
 			</td>
 			<td align="center">
 				<?php echo $row->id; ?>
