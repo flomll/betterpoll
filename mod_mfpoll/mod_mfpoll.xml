@@ -7,8 +7,8 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>admin@mublasafu.net</authorEmail>
 	<authorUrl>www.mublasafu.net</authorUrl>
-	<version>1.5.0</version>
-	<description>DESCPOLL</description>
+	<version>0.1</version>
+	<description>This is the module for the component com_mfpolls.</description>
 	<files>
         <filename module="mod_mfpoll">mod_mfpoll.php</filename>
         <filename>helper.php</filename>
