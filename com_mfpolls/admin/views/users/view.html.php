@@ -273,6 +273,7 @@ class MFPollViewUsers extends JView
 // 		$this->assignRef('params',	$params);
 // 		$this->assignRef('poll',	$poll);
 		$this->assignRef('votes',	$votes);	
+		$this->assignRef('pid',		$pollid);	
 // --------------------------------------------------------------------------------------		
 
 // 		$this->assignRef('user',		JFactory::getUser());

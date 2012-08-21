@@ -3,7 +3,8 @@
 <?php JHTML::_('behavior.tooltip'); ?>
 
 <?php
-	JToolBarHelper::title(  JText::_( 'Users - ' ) );
+	JToolBarHelper::title(  JText::_( 'Users' ) .' - ' );
+	JToolBarHelper::deleteList();
 	JToolBarHelper::cancel();
 ?>
 
@@ -63,10 +64,9 @@
 	{
 		$row = &$this->items[$i];
 
-		$link 		= JRoute::_( 'index.php?option=com_mfpolls&view=poll&task=edit&cid[]='. $row->id );
+		$link 		= JRoute::_( 'index.php?option=com_mfpolls&view=users&cid[]='. $row->id );
 
 		$checked 	= JHTML::_('grid.checkedout',   $row, $i );
-		$published 	= JHTML::_('grid.published', $row, $i );
 	?>
 		<tr class="<?php echo "row$k"; ?>">
 			<td>
@@ -108,8 +108,10 @@
 </div>
 
 	<input type="hidden" name="option" value="com_mfpolls" />
+	<input type="hidden" name="controller" value="users" />
 	<input type="hidden" name="task" value="" />
 	<input type="hidden" name="boxchecked" value="0" />
+	<input type="hidden" name="pollid" value="<?php echo $this->pid; ?>" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 	<?php echo JHTML::_( 'form.token' ); ?>

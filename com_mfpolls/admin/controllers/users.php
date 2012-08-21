@@ -38,46 +38,67 @@ class MFPollControllerUsers extends JController
 	function remove()
 	{
 		// Check for request forgeries
-		echo "DELETE";
-		
 		JRequest::checkToken() or jexit( 'Invalid Token' );
 
 		$db		=& JFactory::getDBO();
 		$cid	= JRequest::getVar( 'cid', array(), '', 'array' );
+		$pollid = (int)JRequest::getvar( 'pollid');
 
 		JArrayHelper::toInteger($cid);
 		$msg = '';
-
+		
 		for ($i=0, $n=count($cid); $i < $n; $i++)
 		{
-			// Delete entry from user						
-// 			$query = 'DELETE FROM #__mfpoll_date'
-// 			. ' WHERE poll_id = '.(int) $cid[$i]
-// 			;
-// 			$db->setQuery( $query );
-// 			if ( !$db->query() ) {
-// 				echo $db->getErrorMsg() . "\n";
-// 			}
-// 			
-// 			$query = 'UPDATE FROM #__mfpoll_data'
-// 			. ' WHERE poll_id = '.(int) $cid[$i]
-// 			;
-// 			$db->setQuery( $query );
-// 			if ( !$db->query() ) {
-// 				echo $db->getErrorMsg() . "\n";
-// 			}
-
-
-// 			$poll =& JTable::getInstance('mfpolldate', 'Table');
+			$row =& JTable::getInstance('mfpolldate', 'Table');
+			// load the item's data so we'll know with what item were dealing with
+			if (!$row->load($cid[$i])) {
+    			$msg .= $row->getError();
+			}
 			
-// 			print_r($poll);
-// 			if (!$poll->delete( $cid[$i] ))
-// 			{
-// 				$msg .= $poll->getError();
-// 			}
+			// FIXME: Check if $pollid == $row->poll_id
+
+			// Decrement vote row - number of 'hits'
+			$query = 'UPDATE #__mfpoll_data AS d'
+			. ' SET d.hits=d.hits-1'
+			. ' WHERE d.pollid = '.(int) $row->poll_id.' AND d.id='.$row->vote_id
+			;
+			$db->setQuery( $query );
+			if ( !$db->query() ) {
+				$msg .= $db->getErrorMsg();
+			}
+			
+			// Decrement poll row - number of 'voters'
+			unset($query);
+			$query = 'UPDATE #__mfpolls AS p'
+			. ' SET p.voters=p.voters-1'
+			. ' WHERE p.id = '.(int) $row->poll_id
+			;
+			$db->setQuery( $query );
+			if ( !$db->query() ) {
+				$msg .= $db->getErrorMsg();
+			}
+
+			if (!$row->delete( $cid[$i] ))
+			{
+				$msg .= $row->getError();
+			}
 		}
-		// TODO: If the last entry is removed you should redirect to default view!!
-// 		$this->setRedirect( 'index.php?option=com_mfpolls&view=users', $msg );
+		
+		// Get number of voters to get right redirection
+		unset($query);
+		$query = 'SELECT COUNT(d.id) AS voters '
+		. ' FROM #__mfpoll_date AS d'
+		. ' WHERE d.poll_id = '.(int) $pollid
+		;
+		$db->setQuery( $query );
+		$count = $db->loadResult();
+		
+		if($count <= 0) 
+		{
+			$this->setRedirect( 'index.php?option=com_mfpolls', $msg );
+		}else {
+			$this->setRedirect( 'index.php?option=com_mfpolls&view=users&cid[]='.$pollid, $msg );
+		}
 	}
 
 	function cancel()

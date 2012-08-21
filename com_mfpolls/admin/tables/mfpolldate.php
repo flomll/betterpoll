@@ -56,42 +56,7 @@ class TableMFPollDate extends JTable
 
 		return $result;
 	}
-
-	/**
-	 * Overloaded check function
-	 *
-	 * @access public
-	 * @return boolean
-	 * @see JTable::check
-	 * @since 1.5
-	 */
-// 	function check()
-// 	{
-// 		// check for valid name
-// 		if (trim( $this->title ) == '')
-// 		{
-// 			$this->setError(JText::_( 'Your Poll must contain a title.' ));
-// 			return false;
-// 		}
-// 		// check for valid lag
-// 		$this->lag = intval( $this->lag );
-// 		if ($this->lag == 0) {
-// 			$this->setError(JText::_( 'Your Poll must have a non-zero lag time.' ));
-// 			return false;
-// 		}
-// 
-// 		if(empty($this->alias)) {
-// 			$this->alias = $this->title;
-// 		}
-// 		$this->alias = JFilterOutput::stringURLSafe($this->alias);
-// 		if(trim(str_replace('-','',$this->alias)) == '') {
-// 			$datenow =& JFactory::getDate();
-// 			$this->alias = $datenow->toFormat("%Y-%m-%d-%H-%M-%S");
-// 		}
-// 
-// 		return true;
-// 	}
-
+	
 	// overloaded delete function
 	function delete( $oid=null )
 	{
