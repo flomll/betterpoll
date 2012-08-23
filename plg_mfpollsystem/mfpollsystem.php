@@ -19,8 +19,11 @@ class plgMFPollMFPollSystem extends JPlugin
  {
     parent::__construct( $subject, $config );
  }
+ 
 /**
- * Plugin method with the same name as the event will be called automatically.
+ * \brief Vote a poll with option.
+ * 
+ * \return FALSE if the vote is not allowed. TRUE on success.
  */
  public function onVote()
  {
@@ -91,13 +94,12 @@ class plgMFPollMFPollSystem extends JPlugin
 	    // $db->query(). Workaround is we split have to execute the method $db->query()
 	    // for two times to update the tables.
 	    return true;
-	}	
-        // Plugin code goes here.
-        // You can access parameters via $this->params.
-    return false;
+	}
+	
+    return 0;
  }
  
- public function onLoadPolls()
+ public function onNotVotedPolls()
  {
  	return true;
  }
@@ -119,8 +121,7 @@ class plgMFPollMFPollSystem extends JPlugin
 	$db->setQuery($query);
 	$rows = $db->loadObject();
 	
-	if($rows->id != null || $rows->id != 0)
-	{
+	if($rows->id != null || $rows->id != 0) {
 		return true;
 	}
 	return false;
